@@ -7,6 +7,7 @@
   <modules>
   	<module>domain</module>
   	<module>fileutil</module>
+  	<module>S3Get</module>
   </modules>
   
   <build>

@@ -11,6 +11,8 @@ public class FileUtil {
 
 	private static Logger log = LoggerFactory.getLogger(FileUtil.class);
 	
+	private static final int retryCnt = 3;
+	private static final int retrySec = 1;
 	/**
 	 * ファイルを作成.
 	 * 
