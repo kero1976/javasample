@@ -1,5 +1,8 @@
 package kero.s3put;
 
+import java.io.File;
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.Test;
 
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
@@ -17,6 +20,14 @@ public class S3UploadTest {
                 .credentialsProvider(ProfileCredentialsProvider.create())
                 .build();
         
-		S3Upload.putS3Object(s3, "u10.jp", "sample/test1.txt", "G:/test/A.txt");
+        
+        //Path input = Paths.get("G:/test/A.txt");
+        
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("TestData/S3Upload/Test1_File1/test1.txt").getFile());
+        
+        Path input = file.toPath();
+        
+		S3Upload.putS3Object(s3, "u10.jp", "sample/test1.txt", input);
 	}
 }

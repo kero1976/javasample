@@ -2,6 +2,7 @@ package kero.s3put;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class S3Upload {
 
         String bucketName =args[0];
         String objectKey = args[1];
-        String objectPath = args[2];
+        Path objectPath = Paths.get(args[2]);
         System.out.println("Putting object " + objectKey +" into bucket "+bucketName);
         System.out.println("  in bucket: " + bucketName);
 
@@ -54,7 +55,7 @@ public class S3Upload {
     public static String putS3Object(S3Client s3,
                                      String bucketName,
                                      String objectKey,
-                                     String objectPath) {
+                                     Path objectPath) {
     	log.debug("START");
 
         try {
@@ -82,9 +83,9 @@ public class S3Upload {
     }
 
     // Return a byte array.
-    private static byte[] getObjectFile(String filePath) throws IOException {
+    private static byte[] getObjectFile(Path filePath) throws IOException {
     	log.debug("START (Path:{})", filePath);
-    	return  Files.readAllBytes(Paths.get(filePath));
+    	return  Files.readAllBytes(filePath);
     }
     // snippet-end:[s3.java2.s3_object_upload.main]
 }
