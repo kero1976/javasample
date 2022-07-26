@@ -3,7 +3,6 @@ package kero.s3put;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,37 +19,28 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 public class S3Upload {
 
 	private static Logger log = LoggerFactory.getLogger(S3Upload.class);
-    public static void main(String[] args) {
-        final String usage = "\n" +
-                "Usage:\n" +
-                "  <bucketName> <objectKey> <objectPath> \n\n" +
-                "Where:\n" +
-                "  bucketName - The Amazon S3 bucket to upload an object into.\n" +
-                "  objectKey - The object to upload (for example, book.pdf).\n" +
-                "  objectPath - The path where the file is located (for example, C:/AWS/book2.pdf). \n\n" ;
 
-        if (args.length != 3) {
-            System.out.println(usage);
-            System.exit(1);
-        }
-
-        String bucketName =args[0];
-        String objectKey = args[1];
-        Path objectPath = Paths.get(args[2]);
-        System.out.println("Putting object " + objectKey +" into bucket "+bucketName);
-        System.out.println("  in bucket: " + bucketName);
-
-
-        S3Client s3 = S3Client.builder()
+	private S3Client s3;
+	
+	public S3Upload() {
+		log.debug("通常コンストラクタ");
+		s3 = S3Client.builder()
                 .region(Region.AP_NORTHEAST_1)
                 .credentialsProvider(ProfileCredentialsProvider.create())
                 .build();
+	}
+	public S3Upload(S3Client s3) {
+		log.debug("テスト用コンストラクタ");
+		this.s3 = s3;
+	}
+    public void upload(String bucketName,
+            String objectKey,
+            Path objectPath) {
 
         String result = putS3Object(s3, bucketName, objectKey, objectPath);
-        System.out.println("Tag information: "+result);
-        s3.close();
+        log.info("result:{}", result);
+        //s3.close();
     }
-
     // snippet-start:[s3.java2.s3_object_upload.main]
     public static String putS3Object(S3Client s3,
                                      String bucketName,
@@ -76,8 +66,7 @@ public class S3Upload {
            return response.eTag();
 
         } catch (Exception e) {
-        	log.error(e.getMessage(), e);
-            System.exit(1);
+        	log.error(e.getMessage());
         }
         return "";
     }

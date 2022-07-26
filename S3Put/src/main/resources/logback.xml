@@ -5,7 +5,7 @@
     </encoder>
   </appender>
 
-<logger name="software.amazon.awssdk" level="ERROR" />
+<logger name="software.amazon.awssdk" level="INFO" />
   <root>
     <appender-ref ref="STDOUT" />
   </root>

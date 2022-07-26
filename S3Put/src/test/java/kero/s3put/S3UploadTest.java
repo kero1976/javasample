@@ -1,33 +1,60 @@
 package kero.s3put;
 
-import java.io.File;
-import java.nio.file.Path;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
-public class S3UploadTest {
+public class S3UploadTest extends TestBase{
 
 	@Test
 	void test1() {
-		
+		S3Upload s3 = new S3Upload();
+		s3.upload("u10.jp", "sample/test1.txt", getTestDataPath("Test1_File1/test1.txt"));
+	}
 
-        S3Client s3 = S3Client.builder()
-                .region(Region.AP_NORTHEAST_1)
-                .credentialsProvider(ProfileCredentialsProvider.create())
-                .build();
-        
-        
-        //Path input = Paths.get("G:/test/A.txt");
-        
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("TestData/S3Upload/Test1_File1/test1.txt").getFile());
-        
-        Path input = file.toPath();
-        
-		S3Upload.putS3Object(s3, "u10.jp", "sample/test1.txt", input);
+	@Test
+	void test2() {
+		S3Upload s3 = new S3Upload();
+		s3.upload("u10.jp", "sample/test2.txt", getTestDataPath("Test2_File2/test2.txt"));
+		s3.upload("u10.jp", "sample/test3.txt", getTestDataPath("Test2_File2/test3.txt"));
+	}
+	
+	@Override
+	public String getName() {
+		return "S3Upload";
+	}
+	
+	@Mock
+	S3Client s3client;
+	
+	@InjectMocks
+	S3Upload s3upload;
+	
+	@BeforeEach
+	private void setup() {
+		MockitoAnnotations.openMocks(this);
+	}
+	
+	@Test
+	void test3() {
+		when(s3client.putObject((PutObjectRequest)any(), (RequestBody)any())).thenReturn(mock(PutObjectResponse.class));
+		
+		s3upload.upload("aaa", "bbb", getTestDataPath("Test1_File1/test1.txt"));
+	}
+	
+	@Test
+	void test4() {
+		when(s3client.putObject((PutObjectRequest)any(), (RequestBody)any())).thenThrow(new RuntimeException());
+		s3upload.upload("aaa", "bbb", getTestDataPath("Test1_File1/test1.txt"));
 	}
 }
